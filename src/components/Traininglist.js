@@ -7,7 +7,7 @@ import Edittraining from './Edittraining';
 import Addtraining from './Addtraining';
 
 export default function Traininglist() {
-  const [Trainings, setTrainings] = useState([]);
+  const [trainings, setTrainings] = useState([]);
   const [open, setOpen] = useState(false);
   const [msg, setMsg] = useState('');
 
@@ -17,9 +17,9 @@ export default function Traininglist() {
   }, [])
 
   const getTrainings = () => {
-    fetch('https://customerrest.herokuapp.com/api/Trainings')
+    fetch('https://customerrest.herokuapp.com/gettrainings')
     .then(response => response.json())
-    .then(data => setTrainings(data.content))
+    .then(data => setTrainings(data))
     .catch(err => console.error(err))
   }
 
@@ -42,8 +42,8 @@ export default function Traininglist() {
     }
   }
 
-  const Addtraining = (training) => {
-    fetch('https://customerrest.herokuapp.com/api/Trainings',
+  const addTraining = (training) => {
+    fetch('https://customerrest.herokuapp.com/api/trainings',
       {
         method: 'POST',
         headers: {
@@ -83,21 +83,33 @@ export default function Traininglist() {
 
   const columns = [
     {
-      Header: 'Activity',
-      accessor: 'activity'
-    },
-    {
       Header: 'Date',
       accessor: 'date'
-    },    
+    }, 
     {
       Header: 'Duration',
       accessor: 'duration'
-    }, 
+    },    
+    {
+      Header: 'Activity',
+      accessor: 'activity'
+    },
+    
     {
       Header: 'Customer',
-      accessor: 'customer'
-    },    
+      accessor: 'customer',
+      Cell: row => {
+        return (
+          <div>
+            <span className="class-for-firstname">{row.row.customer.firstname} </span>
+            <span className="class-for-lastname">{row.row.customer.lastname}</span>
+          </div>
+        )
+      }
+      
+    }
+    /*
+    ,    
     {
       Cell: row => (<Edittraining training={row.original} updateTraining={updateTraining} />)
     },
@@ -107,22 +119,20 @@ export default function Traininglist() {
       sortable: false,
       minWidth: 60,
       Cell: row => (<Button color="secondary" size="small" onClick={() => deleteTraining(row.value)}>Delete</Button>)
-    }
-    
-    ,
-    {
-      Cell: row => (<Addtraining training={row.original.links[0]}>Add Training</Addtraining>)
-    }
-  
+    }  
+    */
   ]
 
   return(
     <div>
-      <Addtraining addTraining={addTraining}/>
+      
+
       <ReactTable filterable={true} defaultPageSize={10} 
-        data={Trainings} columns={columns} />
+        data={trainings} columns={columns} />
       <Snackbar open={open} autoHideDuration={3000} 
         onClose={handleClose} message={msg} />
     </div>
   )
 }
+
+/* <Addtraining addTraining={addTraining}/> */

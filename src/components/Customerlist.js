@@ -110,7 +110,9 @@ export default function Customerlist() {
     {
       Header: 'Phone',
       accessor: 'phone'
-    },
+    }
+    /*
+    ,
     {
       Cell: row => (<Editcustomer customer={row.original} updateCustomer={updateCustomer} />)
     },
@@ -124,14 +126,16 @@ export default function Customerlist() {
     
     ,
     {
-      Cell: row => (<Addtraining customer={row.original.links[0]}>Add Customer</Addtraining>)
+      Cell: row => (<Addtraining customer={row.original.links[0]}>Add Training</Addtraining>)
     }
-  
+  */
   ]
 
   return(
     <div>
-      <Addcustomer addCustomer={addCustomer}/>
+
+
+      
       <ReactTable filterable={true} defaultPageSize={10} 
         data={customers} columns={columns} />
       <Snackbar open={open} autoHideDuration={3000} 
@@ -139,3 +143,6 @@ export default function Customerlist() {
     </div>
   )
 }
+
+
+/* <Addcustomer addCustomer={addCustomer}/> */

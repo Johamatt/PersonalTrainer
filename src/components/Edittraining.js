@@ -5,38 +5,24 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Snackbar from '@material-ui/core/Snackbar';
 
-export default function Addtraining(props) {
+export default function Edittraining(props) {
   const [open, setOpen] = useState(false);
   const [training, setTraining] = useState({date: '', activity: '', duration: '', customer: ''});
 
-  const handleSubmit = () => {
-    fetch('https://customerrest.herokuapp.com/api/trainings',
-      { 
-        method: 'POST', 
-        headers: { 
-          'Content-Type': 'application/json' 
-        }, 
-        body: JSON.stringify(training) 
-      }
-    )
-    .then(_ => {
-        alert('Training added');
-        setOpen(false);
-      })
-      .catch(err => console.error(err))  
-  }
-
   const handleClickOpen = () => {
+    setTraining({date: props.training.date, activity: props.training.activity, duration: props.training.duration,
+      customer: props.training.customer});
     setOpen(true);
   }
 
   const handleClose = () => {
-    console.log(props.addTraining);
+    console.log(props.training.links[0].href)
+    props.updateTraining(props.training.links[0].href, training)
+    
     setOpen(false);
   }
-
+  
   const handleCancel = () => {
     setOpen(false);
   }
@@ -47,13 +33,13 @@ export default function Addtraining(props) {
 
   return(
     <div>
-      <Button style={{margin: 10}} variant="outlined" color="primary" onClick={handleClickOpen}>
-        Add Training
+      <Button size="small" color="primary" onClick={handleClickOpen}>
+        Edit
       </Button>
       <Dialog open={open} disableBackdropClick={true} disableEscapeKeyDown={true} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">New Training</DialogTitle>
+        <DialogTitle id="form-dialog-title">Edit existing content</DialogTitle>
         <DialogContent>
-          <TextField
+        <TextField
             autoFocus
             margin="dense"
             id="date"
@@ -78,24 +64,20 @@ export default function Addtraining(props) {
             name="duration"
             value={training.duration}
             onChange={inputChanged}
-            label="Duration"
+            label="duration"
             fullWidth
           />
+          
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancel} color="primary">
             Cancel
           </Button>
-          <Button onClick={() => handleSubmit()} color="primary">
+          <Button onClick={handleClose} color="primary">
             Save
           </Button>
         </DialogActions>
       </Dialog>    
-
     </div>
   )
 }
-
-
-
-
