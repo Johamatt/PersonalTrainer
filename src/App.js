@@ -1,4 +1,4 @@
-import React from 'react';
+
 import './App.css';
 import Customerlist from './components/Customerlist';
 import AppBar from '@material-ui/core/AppBar';
@@ -6,20 +6,58 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Traininglist from './components/Traininglist';
+import Addcustomer from './components/Addcustomer';
+
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Layout, Menu,Breadcrumb } from 'antd';
+import { UserOutlined, LaptopOutlined, NotificationOutlined, PlusOutlined  } from '@ant-design/icons';
+
+
+const { Header, Content, Footer, Sider } = Layout;
+const SubMenu = Menu.SubMenu;
 
 function App() {
+
   return (
-    <div className="App">
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6">
-            Personal Trainer
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Traininglist />
-      <Customerlist />
-    </div>
+<Router>
+    <Layout>
+    <Header>
+      <div className="logo" />
+      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
+        <Menu.Item key="1">
+          <span>Customers</span>
+          <Link to="/Customerlist" />
+        </Menu.Item>
+        <Menu.Item key="2">
+          <span>Trainings</span>
+          <Link to="/Traininglist" />
+        </Menu.Item>
+        <Menu.Item key="3">
+          <span>Calendar</span>
+          <Link to="/Calendar" />
+        </Menu.Item>
+      </Menu>
+    </Header>
+
+      
+
+      <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
+              <Route path="/Customerlist" component={Customerlist} />
+              <Route path="/Traininglist" component={Traininglist} />
+      </Content>
+
+      <Layout>
+
+      </Layout>
+
+
+    
+    <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+  </Layout>
+</Router>
+
+
   );
 }
 

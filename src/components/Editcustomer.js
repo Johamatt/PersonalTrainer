@@ -6,13 +6,15 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+
+
 export default function Editcustomer(props) {
   const [open, setOpen] = useState(false);
   const [customer, setCustomer] = useState({firstname: '', lastname: '', streetaddress: '', postcode: '', city: '', email: '', phone: ''});
 
   const handleClickOpen = () => {
     setCustomer({firstname: props.customer.firstname, lastname:props.customer.lastname, streetaddress: props.customer.streetaddress,
-    postcode: props.customer.postcode, city: props.customer.city, email: props.customer.email, phone: props.customer.phone});
+      postcode: props.customer.postcode, city: props.customer.city, email: props.customer.email, phone: props.customer.phone});
     setOpen(true);
   }
 

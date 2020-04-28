@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import ReactTable from 'react-table-v6';
 import 'react-table-v6/react-table.css';
-import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import Addcustomer from './Addcustomer';
 import Editcustomer from './Editcustomer';
 import Addtraining from './Addtraining';
+import { Table, Button, Input, Select, } from 'antd';
+import 'antd/dist/antd.css';
+import 'antd/dist/antd.css';
 
-export default function Customerlist() {
+
+import Highlighter from 'react-highlighter'
+import { SearchOutlined } from '@ant-design/icons';
+
+
+
+
+
+export default function Customerlist()  {
   const [customers, setCustomers] = useState([]);
   const [open, setOpen] = useState(false);
   const [msg, setMsg] = useState('');
 
+
+  const { Option } = Select;
 
   useEffect(() => {
     getCustomers();
@@ -24,14 +35,17 @@ export default function Customerlist() {
     .catch(err => console.error(err))
   }
 
-  const deleteCustomer = (link) => {
+  const deleteCustomer = (customer) => {
+    console.log(customer)
+
     if (window.confirm('Are you sure?')) {
-      fetch(link, 
+      fetch(customer, 
         {
           method: 'DELETE',
           headers: {
             'Content-Type':'application/json'
-          },      
+          },    
+          body: JSON.stringify(customer)  
         }
       )
       .then(_ => getCustomers())
@@ -42,6 +56,8 @@ export default function Customerlist() {
       .catch(err => console.error(err))
     }
   }
+
+  
 
   const addCustomer = (customer) => {
     fetch('https://customerrest.herokuapp.com/api/customers',
@@ -81,63 +97,146 @@ export default function Customerlist() {
   const handleClose = () => {
     setOpen(false);
   }
-
   const columns = [
     {
-      Header: 'First Name',
-      accessor: 'firstname'
+      title: 'First Name',
+      dataIndex: 'firstname',
+      key: 'firstname',
+      sorter: (a, b) => { return a.firstname.localeCompare(b.firstname)},
     },
     {
-      Header: 'Last Name',
-      accessor: 'lastname'
+      title: 'Last Name',
+      dataIndex: 'lastname',
+      key: 'lastname',
+      sorter: (a, b) => { return a.lastname.localeCompare(b.lastname)},
     },    
     {
-      Header: 'Street address',
-      accessor: 'streetaddress'
-    }, 
+      title: 'Street address',
+      dataIndex: 'streetaddress',
+      key: 'streetaddress',
+      sorter: (a, b) => { return a.streetaddress.localeCompare(b.streetaddress)},
+    },
     {
-      Header: 'Postcode',
-      accessor: 'postcode'
+      title: 'Postcode',
+      dataIndex: 'postcode',
+      key: 'postcode',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => a.postcode - b.postcode,
     },    
     {
-      Header: 'City',
-      accessor: 'city'
+      title: 'City',
+      dataIndex: 'city',
+      key: 'city',
+      sorter: (a, b) => { return a.city.localeCompare(b.city)},
     },
     {
-      Header: 'E-mail',
-      accessor: 'email'
+      title: 'E-mail',
+      dataIndex: 'email',
+      key: 'email',
+      sorter: (a, b) => { return a.email.localeCompare(b.email)},
     },
     {
-      Header: 'Phone',
-      accessor: 'phone'
-    }
+      title: 'Phone',
+      dataIndex: 'phone',
+      key: 'phone',
+    },
     /*
-    ,
     {
-      Cell: row => (<Editcustomer customer={row.original} updateCustomer={updateCustomer} />)
+      render: (row) => (<Editcustomer customer={row} updateCustomer={updateCustomer} />)
     },
-    {
-      accessor: 'links[0].href',
-      filterable: false,
-      sortable: false,
-      minWidth: 60,
-      Cell: row => (<Button color="secondary" size="small" onClick={() => deleteCustomer(row.value)}>Delete</Button>)
-    }
     
-    ,
     {
-      Cell: row => (<Addtraining customer={row.original.links[0]}>Add Training</Addtraining>)
-    }
-  */
-  ]
+      render: (row) => (<Button type="primary" danger onClick={() => deleteCustomer(row.links[0].href)}>Delete</Button>)
+    },
+    
+    {
+      render: (row) => (<Addtraining customer={row} >Add Training</Addtraining>)
+    },
+    */
+  ] 
 
-  return(
-    <div>
 
+
+
+  const [select, setSelect] = useState('');
+  const [value, setValue] = useState('');
+  const filterColumn = ['firstname', 'lastname','streetaddress', 'postcode', 'city', 'email', 'phone' ]
+  class Filter extends React.Component {
+    
+    state = {
+      column: filterColumn,
+    };
+
+    handleProvinceChange = value => {
+      setSelect(value);
+      console.log(value)
+
+      this.setState({
+        cities: filterColumn[value],
+      });
+    };
+
+    render() {
+      const { column } = this.state;
+      return (
+        <>
+          <Select
+            defaultValue="Select Column"
+            style={{ width: 120 }}
+            onChange={this.handleProvinceChange}
+          >
+            {filterColumn.map(province => (
+              
+            <Option key={province}>{province}</Option>
+            ))}
+          </Select>        
+            {column.map(column => (
+              <Option key={column}></Option>         
+            ))}
+
+      <Input
+      style={{width: 250}}
+      placeholder="Search"
+      value={value}
+      onChange={e => {
+        
+        
+        const currValue = e.target.value;
+        setValue(currValue);
+        console.log(customers)
+        const filteredData = customers.filter(entry =>
+          
+          entry[select].includes(currValue)               // <--- selected sisältää joko firstname, lastname, postcode jne...
+        );
+        setCustomers(filteredData);
+        if (customers.length == 0 || currValue == "") {
+          getCustomers();
+        }
+      }}>
+       
+      </Input>
+        </>
+      );
 
       
-      <ReactTable filterable={true} defaultPageSize={10} 
-        data={customers} columns={columns} />
+    }
+  }
+
+
+
+
+
+
+  
+  return(
+
+    <div>
+      <Filter></Filter>
+      
+      
+      
+      <Table 
+        dataSource={customers} columns={columns} />
       <Snackbar open={open} autoHideDuration={3000} 
         onClose={handleClose} message={msg} />
     </div>
@@ -145,4 +244,4 @@ export default function Customerlist() {
 }
 
 
-/* <Addcustomer addCustomer={addCustomer}/> */
+// <Addcustomer addCustomer={addCustomer}/>

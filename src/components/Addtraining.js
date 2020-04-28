@@ -12,15 +12,23 @@ export default function Addtraining(props) {
   const [training, setTraining] = useState({date: '', activity: '', duration: '', customer: ''});
 
   const handleSubmit = () => {
+
     fetch('https://customerrest.herokuapp.com/api/trainings',
       { 
         method: 'POST', 
         headers: { 
           'Content-Type': 'application/json' 
         }, 
-        body: JSON.stringify(training) 
+        Body: {
+          "date": training.date,
+          "activity": training.activity,
+          "duration": training.duration,
+          "customer": props.customer.links[0].href,
+        }
+        
       }
     )
+    
     .then(_ => {
         alert('Training added');
         setOpen(false);
@@ -29,6 +37,8 @@ export default function Addtraining(props) {
   }
 
   const handleClickOpen = () => {
+
+
     setOpen(true);
   }
 
@@ -81,6 +91,7 @@ export default function Addtraining(props) {
             label="Duration"
             fullWidth
           />
+          
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancel} color="primary">

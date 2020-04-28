@@ -5,6 +5,10 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import Edittraining from './Edittraining';
 import Addtraining from './Addtraining';
+import moment from 'moment';
+
+import { Table, Tag } from 'antd';
+import 'antd/dist/antd.css';
 
 export default function Traininglist() {
   const [trainings, setTrainings] = useState([]);
@@ -51,7 +55,8 @@ export default function Traininglist() {
         },
         body: JSON.stringify(training)
       }
-    )  
+    )
+    
     .then(_ => getTrainings())
     .then(_ => {
       setMsg('New training added');
@@ -83,36 +88,51 @@ export default function Traininglist() {
 
   const columns = [
     {
-      Header: 'Date',
-      accessor: 'date'
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+      sorter: (a, b) => { return a.date.localeCompare(b.date)},
+      
+      render: (date) => 
+        <div>{moment(date).calendar()}</div>,
     }, 
     {
-      Header: 'Duration',
-      accessor: 'duration'
+      title: 'Duration',
+      dataIndex: 'duration',
+      key: 'duration',
+      sorter: (a, b) => a.duration - b.duration,
     },    
     {
-      Header: 'Activity',
-      accessor: 'activity'
+      title: 'Activity',
+      dataIndex: 'activity',
+      key: 'activity',
+      
+      sorter: (a, b) => { return a.activity.localeCompare(b.activity)},
     },
     
     {
-      Header: 'Customer',
-      accessor: 'customer',
-      Cell: row => {
-        return (
-          <div>
-            <span className="class-for-firstname">{row.row.customer.firstname} </span>
-            <span className="class-for-lastname">{row.row.customer.lastname}</span>
-          </div>
-        )
-      }
+      title: 'Customer',
+      dataIndex: 'customer',
+      key: 'customer',
+      sorter: (a, b) => {return a.customer.firstname.localeCompare(b.customer.firstname)},
+      
+      render: (customer) => 
+        <div>
+          <span> {customer.firstname} <span>
+          </span> {customer.lastname} </span>
+        </div>,
+       
       
     }
-    /*
+    
+
     ,    
+       /*
     {
-      Cell: row => (<Edittraining training={row.original} updateTraining={updateTraining} />)
-    },
+      render: row => (<Edittraining training={row.original} updateTraining={updateTraining} />)
+    }
+ 
+    ,
     {
       accessor: 'links[0].href',
       filterable: false,
@@ -125,10 +145,8 @@ export default function Traininglist() {
 
   return(
     <div>
-      
-
-      <ReactTable filterable={true} defaultPageSize={10} 
-        data={trainings} columns={columns} />
+      <Table 
+        dataSource={trainings} columns={columns} />
       <Snackbar open={open} autoHideDuration={3000} 
         onClose={handleClose} message={msg} />
     </div>
