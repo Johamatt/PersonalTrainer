@@ -1,108 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import ReactTable from 'react-table-v6';
 import 'react-table-v6/react-table.css';
 import Snackbar from '@material-ui/core/Snackbar';
-import Edittraining from './Edittraining';
-import Addtraining from './Addtraining';
 import moment from 'moment';
 import { Table, Button, Input, Select } from 'antd';
-
 import Highlighter from 'react-highlight-words'
 import { SearchOutlined } from '@ant-design/icons';
-
 import 'antd/dist/antd.css';
 
 export default function Traininglist() {
   const [trainings, setTrainings] = useState([]);
   const [open, setOpen] = useState(false);
   const [msg, setMsg] = useState('');
-
-
-
-
-
-
-
-
-
-
-
-  const { Option } = Select;
-  const [select, setSelect] = useState('');
-  const [value, setValue] = useState('');
-  const filterColumn = ['Activity', 'customer']
-
-  class Filter extends React.Component {
-    state = {
-      column: filterColumn,
-    };
-
-    handleProvinceChange = value => {
-      setSelect(value);
-      console.log(value)
-
-      this.setState({
-        column: filterColumn[value],
-      });
-    };
-
-    render() {
-      const { column } = this.state;
-      
-      return (
-        <>
-        <Input.Group>
-          <Select
-            defaultValue="Select Column"
-            style={{ width: 120 }}
-            onChange={this.handleProvinceChange}
-          >
-            
-            {filterColumn.map(province => (
-              
-            <Option key={province}>{province}</Option>
-            ))}
-          </Select>        
-            {column.map(column => (
-              <Option key={column}></Option>         
-            ))}
-      <Input
-      disabled={select == ''} // disable search when column not selected  
-      style={{width: 250}}
-      placeholder="Search"
-      value={value}
-      onChange={e => {
-        
-        
-        const currValue = e.target.value;
-        setValue(currValue);
-        const filteredData = trainings.filter(entry =>
-          entry[select.toLowerCase()].includes(currValue)               // <--- selected sisältää joko firstname, lastname, postcode jne...
-        );
-        setTrainings(filteredData);
-        if (trainings.length == 0 || currValue == "") {
-          getTrainings();
-        }
-      }}>
-      </Input>
-      </Input.Group>
-        </>
-      );
-    }
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   useEffect(() => {
@@ -116,9 +24,10 @@ export default function Traininglist() {
     .catch(err => console.error(err))
   }
 
-  const deleteTraining = (link) => {
+  const deleteTraining = (id) => {
+    console.log(id)
     if (window.confirm('Are you sure?')) {
-      fetch(link, 
+      fetch(`https://customerrest.herokuapp.com/api/trainings/${id}`, 
         {
           method: 'DELETE',
           headers: {
@@ -176,50 +85,6 @@ export default function Traininglist() {
   }
 
 /*
-  const columns = [
-    {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-      sorter: (a, b) => { return a.date.localeCompare(b.date)},
-      
-      render: (date) => 
-        <div>{moment(date).calendar()}</div>,
-    }, 
-    {
-      title: 'Duration',
-      dataIndex: 'duration',
-      key: 'duration',
-      sorter: (a, b) => a.duration - b.duration,
-    },    
-    {
-      title: 'Activity',
-      dataIndex: 'activity',
-      key: 'activity',
-      
-      sorter: (a, b) => { return a.activity.localeCompare(b.activity)},
-    },
-    
-    {
-      title: 'Customer',
-      dataIndex: 'customer',
-      key: 'customer',
-      sorter: (a, b) => {return a.customer.firstname.localeCompare(b.customer.firstname)},
-      
-      render: (customer) => 
-        <div>
-          <span> {customer.firstname} <span>
-          </span> {customer.lastname} </span>
-        </div>,
-    }
-    
-
-    ,    
-       
-    {
-      render: row => (<Edittraining training={row.original} updateTraining={updateTraining} />)
-    }
- 
     ,
     {
       accessor: 'links[0].href',
@@ -239,17 +104,20 @@ export default function Traininglist() {
     };
   
     getColumnSearchProps = dataIndex => ({
+      
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
         <div style={{ padding: 8 }}>
           <Input
             ref={node => {
               this.searchInput = node;
+              
             }}
             placeholder={`Search ${dataIndex}`}
             value={selectedKeys[0]}
             onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
             onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
             style={{ width: 188, marginBottom: 8, display: 'block' }}
+            
           />
           <Button
             type="primary"
@@ -266,12 +134,14 @@ export default function Traininglist() {
         </div>
       ),
       filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-      onFilter: (value, record) =>
+      onFilter: (value, record) => 
+      
         record[dataIndex]
           .toString()
           .toLowerCase()
-          .includes(value.toLowerCase()),
+          .includes(value.toLowerCase()),        
       onFilterDropdownVisibleChange: visible => {
+        
         if (visible) {
           setTimeout(() => this.searchInput.select());
         }
@@ -304,6 +174,7 @@ export default function Traininglist() {
     };
   
     render() {
+      
       const columns = [
         {
           title: 'Date',
@@ -313,7 +184,7 @@ export default function Traininglist() {
           ...this.getColumnSearchProps('date'),
           sorter: (a, b) => { return a.date.localeCompare(b.date) },
           render: (date) => 
-          <div>{moment(date).calendar()}</div>,
+          <div>{moment(date).format('lll')}</div>,
         },
         {
           title: 'Duration',
@@ -321,7 +192,7 @@ export default function Traininglist() {
           key: 'duration',
           width: '20%',
           ...this.getColumnSearchProps('duration'),
-          sorter: (a, b) => { return a.duration.localeCompare(b.duration) }
+          sorter: (a, b) => { return a.duration - b.duration }
         },
         {
           title: 'Activity',
@@ -330,20 +201,23 @@ export default function Traininglist() {
           ...this.getColumnSearchProps('activity'),
           sorter: (a, b) => { return a.activity.localeCompare(b.activity) },
         },
-        {
+
+        {        
           title: 'Customer',
           dataIndex: 'customer',
           key: 'customer',
           ...this.getColumnSearchProps('customer'),
           sorter: (a, b) => {return a.customer.firstname.localeCompare(b.customer.firstname)},
           render: (customer) => 
-          <div>
-            <span> {customer.firstname} <span>
-            </span> {customer.lastname} </span>
-          </div>,
+          <>
+            <span> {customer.firstname} {customer.lastname} </span>  
+          </>,
+        },
+        {
+          render: (row) => (<Button type="primary" danger shape='round' size='small' onClick={() => deleteTraining(row.id)}>Delete</Button>)
         }
       ];
-      return <Table columns={columns} dataSource={trainings} bordered />;
+      return <Table columns={columns} dataSource={trainings} bordered/>;
     }
   }
 
@@ -352,6 +226,8 @@ export default function Traininglist() {
 
 
 
+        
+  
 
 
 

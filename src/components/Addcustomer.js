@@ -5,6 +5,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { UserAddOutlined, } from '@ant-design/icons';
 
 export default function Addcustomer(props) {
   const [open, setOpen] = useState(false);
@@ -29,8 +30,12 @@ export default function Addcustomer(props) {
 
   return(
     <div>
-      <Button style={{margin: 10}} variant="outlined" color="primary" onClick={handleClickOpen}>
+      
+      <Button 
+      style={{margin: 10}} variant="outlined" color="primary" onClick={handleClickOpen}>
+        <UserAddOutlined  />&nbsp;
         Add customer
+        
       </Button>
       <Dialog open={open} disableBackdropClick={true} disableEscapeKeyDown={true} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">New customer</DialogTitle>

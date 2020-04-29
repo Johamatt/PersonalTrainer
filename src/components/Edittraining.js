@@ -8,6 +8,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import moment from 'moment';
 
 
+
 export default function Edittraining(props) {
   const [open, setOpen] = useState(false);
   const [training, setTraining] = useState({date: '', activity: '', duration: '', customer: ''});

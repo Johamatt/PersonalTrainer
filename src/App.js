@@ -7,6 +7,9 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Traininglist from './components/Traininglist';
 import Addcustomer from './components/Addcustomer';
+import SportsHandballIcon from '@material-ui/icons/SportsHandball';
+import PeopleIcon from '@material-ui/icons/People';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
@@ -26,15 +29,18 @@ function App() {
       <div className="logo" />
       <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
         <Menu.Item key="1">
-          <span>Customers</span>
+        <PeopleIcon />&nbsp;
+           Customers
           <Link to="/Customerlist" />
         </Menu.Item>
         <Menu.Item key="2">
+        <SportsHandballIcon/>
           <span>Trainings</span>
           <Link to="/Traininglist" />
         </Menu.Item>
         <Menu.Item key="3">
-          <span>Calendar</span>
+          <CalendarTodayIcon />&nbsp;
+          Calendar
           <Link to="/Calendar" />
         </Menu.Item>
       </Menu>

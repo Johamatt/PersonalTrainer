@@ -11,7 +11,7 @@ import ReactDOM from 'react-dom';
 
 
 import Highlighter from 'react-highlight-words'
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, UserAddOutlined, } from '@ant-design/icons';
 
 
 
@@ -37,8 +37,6 @@ export default function Customerlist() {
   }
 
   const deleteCustomer = (customer) => {
-    console.log(customer)
-
     if (window.confirm('Are you sure?')) {
       fetch(customer,
         {
@@ -347,106 +345,33 @@ class FilterTable extends React.Component {
         ...this.getColumnSearchProps('phone'),
         sorter: (a, b) => { return a.phone.localeCompare(b.phone) },
       },
+
+      {
+        title: 'Operations',
+        colSpan: 3,
+        render: (row) => (<Addtraining customer={row}/>)  
+      },     
+      {
+        render: (row) => (<Editcustomer customer={row} updateCustomer={updateCustomer} />)
+      },
+      {
+        render: (row) => (<Button type="primary" danger shape='round' size='small' onClick={() => deleteCustomer(row.links[0].href)}>Delete</Button>)
+        
+      },
+      
     ];
+
     return <Table columns={columns} dataSource={customers} bordered />;
   }
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   return (
 
     <div>
+      <Addcustomer addCustomer={addCustomer}/>
+      
       <FilterTable></FilterTable>
-
-
       <Snackbar open={open} autoHideDuration={3000}
         onClose={handleClose} message={msg} />
     </div>
@@ -454,4 +379,3 @@ class FilterTable extends React.Component {
 }
 
 
-// <Addcustomer addCustomer={addCustomer}/>
