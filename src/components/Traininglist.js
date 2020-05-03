@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import ReactTable from 'react-table-v6';
 import 'react-table-v6/react-table.css';
-import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
-import Edittraining from './Edittraining';
-import Addtraining from './Addtraining';
+import moment from 'moment';
+import { Table, Button, Input, Select } from 'antd';
+import Highlighter from 'react-highlight-words'
+import { SearchOutlined } from '@ant-design/icons';
+import 'antd/dist/antd.css';
+import styled from 'styled-components';
 
 export default function Traininglist() {
   const [trainings, setTrainings] = useState([]);
@@ -23,9 +25,10 @@ export default function Traininglist() {
     .catch(err => console.error(err))
   }
 
-  const deleteTraining = (link) => {
+  const deleteTraining = (id) => {
+    console.log(id)
     if (window.confirm('Are you sure?')) {
-      fetch(link, 
+      fetch(`https://customerrest.herokuapp.com/api/trainings/${id}`, 
         {
           method: 'DELETE',
           headers: {
@@ -51,7 +54,8 @@ export default function Traininglist() {
         },
         body: JSON.stringify(training)
       }
-    )  
+    )
+    
     .then(_ => getTrainings())
     .then(_ => {
       setMsg('New training added');
@@ -81,38 +85,11 @@ export default function Traininglist() {
     setOpen(false);
   }
 
-  const columns = [
-    {
-      Header: 'Date',
-      accessor: 'date'
-    }, 
-    {
-      Header: 'Duration',
-      accessor: 'duration'
-    },    
-    {
-      Header: 'Activity',
-      accessor: 'activity'
-    },
-    
-    {
-      Header: 'Customer',
-      accessor: 'customer',
-      Cell: row => {
-        return (
-          <div>
-            <span className="class-for-firstname">{row.row.customer.firstname} </span>
-            <span className="class-for-lastname">{row.row.customer.lastname}</span>
-          </div>
-        )
-      }
-      
-    }
-    /*
-    ,    
-    {
-      Cell: row => (<Edittraining training={row.original} updateTraining={updateTraining} />)
-    },
+  const Container = styled.div`
+  text-align: center;
+  `;
+/*
+    ,
     {
       accessor: 'links[0].href',
       filterable: false,
@@ -120,19 +97,181 @@ export default function Traininglist() {
       minWidth: 60,
       Cell: row => (<Button color="secondary" size="small" onClick={() => deleteTraining(row.value)}>Delete</Button>)
     }  
-    */
   ]
+*/
+
+
+  class FilterTable extends React.Component {
+    state = {
+      searchText: '',
+      searchedColumn: '',
+    };
+  
+    getColumnSearchProps = dataIndex => ({
+      
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8 }}>
+          <Input
+            ref={node => {
+              this.searchInput = node;
+              
+            }}
+            placeholder={`Search ${dataIndex}`}
+            value={selectedKeys[0]}
+            onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            style={{ width: 188, marginBottom: 8, display: 'block' }}
+            
+          />
+          <Button
+            type="primary"
+            onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90, marginRight: 8 }}
+          >
+            Search
+          </Button>
+          <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+            Reset
+          </Button>
+        </div>
+      ),
+      filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+      onFilter: (value, record) => 
+      
+        record[dataIndex]
+          .toString()
+          .toLowerCase()
+          .includes(value.toLowerCase()),        
+      onFilterDropdownVisibleChange: visible => {
+        
+        if (visible) {
+          setTimeout(() => this.searchInput.select());
+        }
+      },
+      render: text =>
+        this.state.searchedColumn === dataIndex ? (
+          <Highlighter
+            highlightStyle={{ backgroundColor: '#f2a130', padding: 0 }}
+            searchWords={[this.state.searchText]}
+            autoEscape
+            textToHighlight={text.toString()}
+            
+          />
+        ) : (
+          text
+        ),
+    });
+  
+    handleSearch = (selectedKeys, confirm, dataIndex) => {
+      confirm();
+      this.setState({
+        searchText: selectedKeys[0],
+        searchedColumn: dataIndex,
+      });
+    };
+  
+    handleReset = clearFilters => {
+      clearFilters();
+      this.setState({ searchText: '' });
+    };
+
+    render() {
+      
+      const columns = [
+        {
+          title: 'Date',
+          dataIndex: 'date',
+          key: 'date',
+          width: '30%',
+          ...this.getColumnSearchProps('date'),
+          sorter: (a, b) => { return a.date.localeCompare(b.date) },
+          render: (date) => 
+          <div>{moment(date).format('lll')}</div>,
+        },
+        {
+          title: 'Duration',
+          dataIndex: 'duration',
+          key: 'duration',
+          width: '20%',
+          ...this.getColumnSearchProps('duration'),
+          sorter: (a, b) => { return a.duration - b.duration }
+        },
+        {
+          title: 'Activity',
+          dataIndex: 'activity',
+          key: 'activity',
+          ...this.getColumnSearchProps('activity'),
+          sorter: (a, b) => { return a.activity.localeCompare(b.activity) },
+        },
+
+        {        
+          title: 'Customer',
+          dataIndex: 'customer',
+          key: 'customer',
+          ...this.getColumnSearchProps('customer'),
+          sorter: (a, b) => {return a.customer.firstname.localeCompare(b.customer.firstname)},
+          render: (customer) => 
+          <>
+            <span> {customer.firstname} {customer.lastname} </span>  
+          </>,
+        },
+        {
+          title: 'Operations',
+          colSpan: 2,
+          render: (row) => (<Container><Button type="primary" danger shape='round' size='small' onClick={() => deleteTraining(row.id)}>Delete</Button></Container>)
+        }
+      ];
+      return <Table columns={columns} dataSource={trainings} bordered/>;
+    }
+  }
+
+
+
+
+
+
+        
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return(
     <div>
-      
-
-      <ReactTable filterable={true} defaultPageSize={10} 
-        data={trainings} columns={columns} />
+      <FilterTable></FilterTable>
       <Snackbar open={open} autoHideDuration={3000} 
         onClose={handleClose} message={msg} />
     </div>
   )
 }
 
-/* <Addtraining addTraining={addTraining}/> */
+// <Addtraining addTraining={addTraining}/> */
