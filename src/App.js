@@ -10,15 +10,18 @@ import Addcustomer from './components/Addcustomer';
 import SportsHandballIcon from '@material-ui/icons/SportsHandball';
 import PeopleIcon from '@material-ui/icons/People';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import Demoapp from './components/Kalenteri';
+
 
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import { Layout, Menu,Breadcrumb } from 'antd';
 import { UserOutlined, LaptopOutlined, NotificationOutlined, PlusOutlined  } from '@ant-design/icons';
 
 
 const { Header, Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
+
 
 function App() {
 
@@ -49,8 +52,13 @@ function App() {
       
 
       <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
-              <Route path="/Customerlist" component={Customerlist} />
+    
+      <Route exact path="/" component={Customerlist} />
+     
+      <Route path="/Customerlist" component={Customerlist} />
               <Route path="/Traininglist" component={Traininglist} />
+              <Route path="/Calendar" component={Demoapp} />
+              
       </Content>
 
       <Layout>

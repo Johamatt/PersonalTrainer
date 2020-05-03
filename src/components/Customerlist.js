@@ -96,63 +96,9 @@ export default function Customerlist() {
   const handleClose = () => {
     setOpen(false);
   }
-  const columns = [
-    {
-      title: 'First Name',
-      dataIndex: 'firstname',
-      key: 'firstname',
-      sorter: (a, b) => { return a.firstname.localeCompare(b.firstname) },
-    },
-    {
-      title: 'Last Name',
-      dataIndex: 'lastname',
-      key: 'lastname',
-      sorter: (a, b) => { return a.lastname.localeCompare(b.lastname) },
-    },
-    {
-      title: 'Street address',
-      dataIndex: 'streetaddress',
-      key: 'streetaddress',
-      sorter: (a, b) => { return a.streetaddress.localeCompare(b.streetaddress) },
-    },
-    {
-      title: 'Postcode',
-      dataIndex: 'postcode',
-      key: 'postcode',
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.postcode - b.postcode,
-    },
-    {
-      title: 'City',
-      dataIndex: 'city',
-      key: 'city',
-      sorter: (a, b) => { return a.city.localeCompare(b.city) },
-    },
-    {
-      title: 'E-mail',
-      dataIndex: 'email',
-      key: 'email',
-      sorter: (a, b) => { return a.email.localeCompare(b.email) },
-    },
-    {
-      title: 'Phone',
-      dataIndex: 'phone',
-      key: 'phone',
-    },
-    /*
-    {
-      render: (row) => (<Editcustomer customer={row} updateCustomer={updateCustomer} />)
-    },
-    
-    {
-      render: (row) => (<Button type="primary" danger onClick={() => deleteCustomer(row.links[0].href)}>Delete</Button>)
-    },
-    
-    {
-      render: (row) => (<Addtraining customer={row} >Add Training</Addtraining>)
-    },
-    */
-  ]
+
+
+
 
 
 /*

@@ -6,6 +6,7 @@ import { Table, Button, Input, Select } from 'antd';
 import Highlighter from 'react-highlight-words'
 import { SearchOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
+import styled from 'styled-components';
 
 export default function Traininglist() {
   const [trainings, setTrainings] = useState([]);
@@ -84,6 +85,9 @@ export default function Traininglist() {
     setOpen(false);
   }
 
+  const Container = styled.div`
+  text-align: center;
+  `;
 /*
     ,
     {
@@ -172,7 +176,7 @@ export default function Traininglist() {
       clearFilters();
       this.setState({ searchText: '' });
     };
-  
+
     render() {
       
       const columns = [
@@ -214,7 +218,9 @@ export default function Traininglist() {
           </>,
         },
         {
-          render: (row) => (<Button type="primary" danger shape='round' size='small' onClick={() => deleteTraining(row.id)}>Delete</Button>)
+          title: 'Operations',
+          colSpan: 2,
+          render: (row) => (<Container><Button type="primary" danger shape='round' size='small' onClick={() => deleteTraining(row.id)}>Delete</Button></Container>)
         }
       ];
       return <Table columns={columns} dataSource={trainings} bordered/>;

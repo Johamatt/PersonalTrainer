@@ -50,6 +50,7 @@ export default function Addtraining(props) {
   }
 
 
+
   class Datez extends React.Component {
     state = {
       startDate: new Date()
